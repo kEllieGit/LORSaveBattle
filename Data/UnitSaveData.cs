@@ -43,5 +43,15 @@ namespace SaveBattle.Data
     public class EmotionCoinData
     {
         public EmotionCoinType CoinType { get; set; }
+
+        public EmotionCoinData()
+        {
+
+        }
+
+        public EmotionCoinData(EmotionCoinType coinType)
+        {
+            CoinType = coinType;
+        }
     }
 }

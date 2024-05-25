@@ -57,7 +57,7 @@ namespace SaveBattle
                     UI.UIController.Instance.SetStageInfo(stage);
                     GlobalGameManager.Instance.LoadBattleScene();
 
-                    await Task.Delay(500);
+                    await Task.Delay(1000);
                     LoadBattleData(saveData, stageController, stage);
                 }
                 else
@@ -130,7 +130,7 @@ namespace SaveBattle
             }
         }
 
-        static void LoadUnitData(IEnumerable<BattleUnitModel> units, StageSaveData stageData)
+        private static void LoadUnitData(IEnumerable<BattleUnitModel> units, StageSaveData stageData)
         {
             foreach (var unit in units)
             {
@@ -146,7 +146,7 @@ namespace SaveBattle
             }
         }
 
-        static void CreateMissingUnits(IEnumerable<UnitSaveData> unitData, StageSaveData stageData)
+        private static void CreateMissingUnits(IEnumerable<UnitSaveData> unitData, StageSaveData stageData)
         {
             var stageController = Singleton<StageController>.Instance;
 
@@ -174,14 +174,15 @@ namespace SaveBattle
         /// <exception cref="Exception"></exception>
         public static async void Save(StageManagerType managerType = StageManagerType.Map)
         {
-            await Task.Delay(500);
+            // Wait a split second for anything we might miss.
+            await Task.Delay(1000);
 
             try
             {
                 var stageController = Singleton<StageController>.Instance;
                 if (stageController == null)
                 {
-                    throw new Exception("Unable to save battle data, StageController was null!");
+                    throw new NullReferenceException("Unable to save battle data, StageController was null!");
                 }
 
                 var stageFloor = stageController.GetCurrentStageFloorModel();
@@ -192,7 +193,7 @@ namespace SaveBattle
                     StageType = managerType,
                     Wave = stageController.CurrentWave,
                     Turn = stageController.RoundTurn,
-                    EmotionLevel = stageController.GetCurrentStageFloorModel().team.emotionLevel,
+                    EmotionLevel = stageFloor.team.emotionLevel,
                     Sephirah = stageController.CurrentFloor,
                     UsedFloors = stageController.usedFloorList,
                 };
@@ -220,7 +221,7 @@ namespace SaveBattle
                     unitSaveData.Hand.AddRange(unit.allyCardDetail.GetHand().Select(card => new SaveId(card.GetID())));
                     unitSaveData.EGOHand.AddRange(unit.personalEgoDetail.GetHand().Select(card => new SaveId(card.GetID())));
                     unitSaveData.EmotionCards.AddRange(unit.emotionDetail.PassiveList.Select(card => card.XmlInfo.id));
-                    unitSaveData.EmotionCoins.AddRange(unit.emotionDetail.AllEmotionCoins.Select(coin => new EmotionCoinData { CoinType = coin.CoinType }));
+                    unitSaveData.EmotionCoins.AddRange(unit.emotionDetail.AllEmotionCoins.Select(coin => new EmotionCoinData(coin.CoinType)));
                     unitSaveData.Passives.AddRange(unit.passiveDetail.PassiveList.Select(entry => new SaveId(entry.id)));
 
                     var statuses = unit.bufListDetail.GetActivatedBufList().Concat(unit.bufListDetail.GetReadyBufList());
