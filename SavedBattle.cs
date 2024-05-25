@@ -6,9 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using SaveBattle.Data;
-using TMPro;
-using UI;
-using static UnityEngine.UI.CanvasScaler;
 
 namespace SaveBattle
 {
@@ -107,7 +104,7 @@ namespace SaveBattle
                     var unitData = stageData.UnitData.Where(x => x.Index == aliveUnit.index).FirstOrDefault();
                     if (unitData == null)
                     {
-                        aliveUnit.Die();
+                        BattleObjectManager.instance.UnregisterUnit(aliveUnit);
                     }
                 }
 
@@ -123,6 +120,7 @@ namespace SaveBattle
 
                 CreateMissingUnits(factionPlayerUnits, stageData);
                 CreateMissingUnits(factionEnemyUnits, stageData);
+                BattleObjectManager.instance.InitUI();
             }
             catch (Exception ex)
             {
@@ -152,6 +150,12 @@ namespace SaveBattle
 
             foreach (var unmatchedUnit in unitData)
             {
+                var aliveUnits = BattleObjectManager.instance.GetAliveList(unmatchedUnit.Faction);
+                if ( aliveUnits.Any(x => x.index == unmatchedUnit.Index) )
+                {
+                    continue;
+                }
+
                 BattleUnitModel newUnit = null;
 
                 switch (unmatchedUnit.Faction)

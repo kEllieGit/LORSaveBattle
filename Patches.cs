@@ -1,9 +1,6 @@
 ﻿using UI;
-using TMPro;
 using HarmonyLib;
-using UnityEngine;
 using System.IO;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace SaveBattle
@@ -71,27 +68,7 @@ namespace SaveBattle
         {
             if (File.Exists(SerializationInfo.Filepath))
             {
-                var uiAlarmPopup = UIAlarmPopup.instance;
-                uiAlarmPopup.SetAlarmText("");
-
-                var textField = AccessTools.Field(typeof(UIAlarmPopup), "txt_alarm");
-                TMP_Text text = (TMP_Text)textField.GetValue(uiAlarmPopup);
-                text.SetText("Found previously saved battle data. Load it?");
-
-                var btField = AccessTools.Field(typeof(UIAlarmPopup), "buttonNumberType");
-                btField.SetValue(uiAlarmPopup, UIAlarmButtonType.YesNo);
-
-                var btnsField = AccessTools.Field(typeof(UIAlarmPopup), "ButtonRoots");
-                List<GameObject> buttons = (List<GameObject>)btnsField.GetValue(uiAlarmPopup);
-
-                buttons[0].gameObject.SetActive(false);
-                buttons[(int)btField.GetValue(uiAlarmPopup)].gameObject.SetActive(true);
-
-                var confirmField = AccessTools.Field(typeof(UIAlarmPopup), "_confirmEvent");
-                ConfirmEvent confirmEvent = (ConfirmEvent)confirmField.GetValue(uiAlarmPopup);
-
-                var del = new ConfirmEvent(Load);
-                confirmField.SetValue(uiAlarmPopup, del);
+                UIAlarmPopup.instance.AddAlarm("Found previously saved battle data. Load it?", UIAlarmButtonType.YesNo, new ConfirmEvent(Load));
             }
         }
 

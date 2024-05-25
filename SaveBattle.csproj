@@ -103,7 +103,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\StageSaveData.cs" />
     <Compile Include="Patches.cs" />
-    <Compile Include="Util\RemoveEGOLock.cs" />
     <Compile Include="SavedBattle.cs" />
     <Compile Include="Util\UIAlarmPopupExtensions.cs" />
   </ItemGroup>
